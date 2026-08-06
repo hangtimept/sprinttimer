@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0a0e14" />
+  <title>Sprint Timer Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo">ST</div>
+        <div>
+          <h1>Sprint Timer Pro</h1>
+          <p class="tagline">Dual-phone precision timing</p>
+        </div>
+      </div>
+      <div id="connBadge" class="conn-badge offline">Offline</div>
+    </header>
+
+    <!-- Status -->
+    <div id="statusBar" class="status waiting">Choose role to begin</div>
+
+    <!-- ========== PAIRING ========== -->
+    <section id="pairingPanel" class="panel pairing">
+      <div class="note">
+        <strong>iPhone tip:</strong> Open in <b>Safari</b> (not in-app browsers).  
+        Use two phones on the same or different networks.
+      </div>
+
+      <div class="role-row">
+        <button class="role-btn" id="btnStart" type="button">
+          <span class="role-icon">①</span>
+          <span class="role-title">START Camera</span>
+          <span class="role-desc">Place at the starting line</span>
+        </button>
+        <button class="role-btn" id="btnFinish" type="button">
+          <span class="role-icon">②</span>
+          <span class="role-title">FINISH Camera</span>
+          <span class="role-desc">Place at the finish line</span>
+        </button>
+      </div>
+
+      <div id="startUI" class="pair-box" hidden>
+        <p class="pair-label">Share this code with the Finish phone</p>
+        <div class="room-code" id="roomCodeDisplay">·····</div>
+        <p class="pair-hint">Waiting for connection…</p>
+      </div>
+
+      <div id="finishUI" class="pair-box" hidden>
+        <p class="pair-label">Enter the 5-digit code from Start</p>
+        <input type="text" id="roomCodeInput" placeholder="12345" maxlength="5" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+        <button type="button" class="btn btn-primary" id="btnJoin">Connect</button>
+      </div>
+    </section>
+
+    <!-- ========== MAIN ========== -->
+    <section id="mainPanel" class="main" hidden>
+      <!-- Enable camera (must be user gesture on iOS) -->
+      <div id="enableCameraBox" class="enable-box">
+        <p>Connected successfully.<br>Tap below to allow camera access.</p>
+        <button type="button" class="btn btn-primary btn-lg" id="btnEnableCam">Enable Camera</button>
+      </div>
+
+      <!-- Camera stage -->
+      <div class="camera-box" id="cameraBox" hidden>
+        <video id="cam" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+        <!-- Draggable detection line -->
+        <div class="detect-line" id="detectLine">
+          <div class="line-handle"></div>
+          <div class="line-label">DETECT</div>
+        </div>
+        <div class="flash" id="flash"></div>
+      </div>
+
+      <!-- Big timer -->
+      <div class="timer-block">
+        <div class="timer" id="timer">0.000</div>
+        <div class="timer-unit">seconds</div>
+        <div class="speed-row" id="speedRow" hidden>
+          <span id="speedValue">—</span>
+          <select id="speedUnit">
+            <option value="ms">m/s</option>
+            <option value="kmh">km/h</option>
+            <option value="mph">mph</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="role-pill" id="roleLabel"></div>
+
+      <!-- Controls -->
+      <div class="controls" id="controlButtons" hidden>
+        <button type="button" class="btn btn-primary btn-lg" id="btnArm">Arm / Reset</button>
+        <button type="button" class="btn btn-ghost" id="btnCalibrate">Calibrate</button>
+      </div>
+
+      <!-- Settings -->
+      <div class="settings" id="settingsBox" hidden>
+        <div class="setting">
+          <label>Sensitivity <span id="sensitivityValue">14</span></label>
+          <input type="range" id="sensitivitySlider" min="4" max="45" value="14" />
+        </div>
+        <div class="setting">
+          <label>Distance between lines (m)</label>
+          <input type="number" id="distanceInput" min="1" max="400" step="0.1" placeholder="e.g. 40" inputmode="decimal" />
+        </div>
+        <div id="calibrationPanel" class="cal-panel" hidden>
+          <label>Motion strength</label>
+          <div class="meter-wrap">
+            <div class="meter-bar" id="motionBar"></div>
+          </div>
+          <p class="cal-hint">Walk through the line. Set sensitivity just above the resting noise.</p>
+        </div>
+      </div>
+
+      <!-- Session history -->
+      <div class="history" id="historyPanel" hidden>
+        <div class="history-header">
+          <h2>Session times</h2>
+          <button type="button" class="btn btn-sm btn-ghost" id="btnClearHistory">Clear</button>
+        </div>
+        <ul id="historyList" class="history-list"></ul>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
